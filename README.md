@@ -7,7 +7,16 @@ Visando atender aos requisitos do projeto do referido capítulo, o script contid
 
 Para executar esse arquivo, tenha instalado a versão 3 do python. Como estabelecido no projeto, não há necessidade de entradas por parte do usuário. 
 
-CUIDADO: O SCRIPT MODIFICA ALGUNS REGISTROS DA BASE DE DADOS A FIM DE AJUSTAR A BASE PARA A ANÁLISE. CERTIFIQUE-SE QUE A BASE UTILIZADA É UMA CÓPIA OU NÃO É A BASE DO AMBIENTE DE PRODUÇÃO.
+Quais são as saídas do script
+==============
+
+A análise do log tem como base verificar:
+
+1) Os 3 artigos mais lidos da base são exibidos com a respectiva quantidade de visualizações.
+
+2) Quem são os autores mais lidos.
+
+3) Exibir a quantidade de requisições malsucedidas com base nas respostas HTTP registradas no log.
 
 Informações do Banco de Dados
 ==============
