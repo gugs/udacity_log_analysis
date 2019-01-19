@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import psycopg2
 
 DATABASE_NAME = "news"
@@ -11,8 +13,12 @@ def top3_articles():
     db = psycopg2.connect(dbname=DATABASE_NAME)
     session = db.cursor()
     # Query
-    session.execute("select path, count(*) as count from log group by path" +
+    session.execute("create or replace view article_counting as select" +
+                    " path, count(*) as count from log group by path" +
                     " order by count desc limit 3 offset 1;")
+    session.execute("select a.title, c.count from articles a inner join" +
+                    " article_counting c on '/article/' || a.slug =" +
+                    " c.path order by c.count desc")
     output += session.fetchall()
     db.close()
 
@@ -54,10 +60,10 @@ def access_error_stats():
                     " count(*) as count from log where status ='200 OK' " +
                     "  group by date(time) order by count desc;")
     # Query to calculate the percentage
-    session.execute("select e.date, (100 * cast(e.count as decimal) /" +
-                    " cast(s.count as decimal)) as percentage from error e" +
-                    " inner join successful s on e.date = s.date order" +
-                    " by e.count desc;")
+    session.execute("select e.date, round( (100 * cast(e.count as decimal) /" +
+                    " cast(s.count as decimal)),2) as percentage from " +
+                    " error e inner join successful s on e.date = s.date " +
+                    " order by e.count desc;")
     output += session.fetchall()
     db.close()
 
@@ -73,7 +79,7 @@ def print_list(option, list):
             print "%s views  %s " % list[x]
     elif option == 'OPCAO2':
         for x in range(len(list)):
-            print "day %s error percentage %s" % list[x]
+            print "%s - %s %% errors " % list[x]
     else:
         print "Error: Option not found!"
 
@@ -87,6 +93,7 @@ def main():
     print
     print_list('OPCAO2', access_error_stats())
     print
+
 
 if __name__ == "__main__":
     # execute only if run as a script
